@@ -1,73 +1,88 @@
-import * as SQLite from 'expo-sqlite/next'; 
 
+import * as SQLite from 'expo-sqlite/next';
 
 export async function getDbConnection() {
-    const cx = await SQLite.openDatabaseAsync('dbUsuarios.db');
+    const cx = await SQLite.openDatabaseAsync('dbQuiz.db');
     return cx;
 }
 
-
-export async function createTable() {
-    const query = `CREATE TABLE IF NOT EXISTS tbUsuarios
-        (
-            codigo INTEGER not null primary key,
-            nome TEXT not null,
-            email TEXT not null,
-            senha TEXT not null
-        )`;
+export async function createTables() {
+    const queries = [
+        `CREATE TABLE IF NOT EXISTS temas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL UNIQUE
+        )`,
+        `CREATE TABLE IF NOT EXISTS perguntas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            texto TEXT NOT NULL,
+            tema_id INTEGER NOT NULL,
+            FOREIGN KEY (tema_id) REFERENCES temas(id)
+        )`,
+        `CREATE TABLE IF NOT EXISTS alternativas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            texto TEXT NOT NULL,
+            correta INTEGER NOT NULL,
+            pergunta_id INTEGER NOT NULL,
+            FOREIGN KEY (pergunta_id) REFERENCES perguntas(id)
+        )`
+    ];
     var cx = await getDbConnection();
-    await cx.execAsync(query);
-    await cx.closeAsync();
-};
-
-
-export async function obtemTodosUsuarios() {
-    var retorno = [];
-    var dbCx = await getDbConnection();
-    const registros = await dbCx.getAllAsync('SELECT * FROM tbUsuarios');
-    await dbCx.closeAsync();
-    for (const registro of registros) {
-        let obj = {
-            codigo: registro.codigo,
-            nome: registro.nome,
-            email: registro.email
-        };
-        retorno.push(obj);
+    for (const query of queries) {
+        await cx.execAsync(query);
     }
-    return retorno;
+    await cx.closeAsync();
 }
 
-
-export async function adicionaUsuario(usuario) {
+// Temas
+export async function adicionaTema(nome) {
     let dbCx = await getDbConnection();
-    let query = 'insert into tbUsuarios (codigo, nome, email, senha) values (?,?,?,?)';
-    const result = await dbCx.runAsync(query, [usuario.codigo, usuario.nome, usuario.email, usuario.senha]);
+    let query = 'INSERT INTO temas (nome) VALUES (?)';
+    const result = await dbCx.runAsync(query, [nome]);
     await dbCx.closeAsync();
     return result.changes == 1;
 }
 
+export async function obtemTodosTemas() {
+    var dbCx = await getDbConnection();
+    const registros = await dbCx.getAllAsync('SELECT * FROM temas');
+    await dbCx.closeAsync();
+    return registros;
+}
 
-export async function alteraUsuario(usuario) {
+// Perguntas
+export async function adicionaPergunta(texto, tema_id) {
     let dbCx = await getDbConnection();
-    let query = 'update tbUsuarios set nome=?, email=?, senha=? where codigo=?';
-    const result = await dbCx.runAsync(query, [usuario.nome, usuario.email, usuario.senha, usuario.codigo]);
+    let query = 'INSERT INTO perguntas (texto, tema_id) VALUES (?, ?)';
+    const result = await dbCx.runAsync(query, [texto, tema_id]);
+    let perguntaId = result.lastInsertRowid;
+    // Fallback: se não veio o id, buscar o último id inserido
+    if (!perguntaId) {
+        const rows = await dbCx.getAllAsync('SELECT id FROM perguntas ORDER BY id DESC LIMIT 1');
+        perguntaId = rows.length > 0 ? rows[0].id : null;
+    }
+    await dbCx.closeAsync();
+    return perguntaId;
+}
+
+export async function obtemPerguntasPorTema(tema_id) {
+    var dbCx = await getDbConnection();
+    const registros = await dbCx.getAllAsync('SELECT * FROM perguntas WHERE tema_id = ?', [tema_id]);
+    await dbCx.closeAsync();
+    return registros;
+}
+
+// Alternativas
+export async function adicionaAlternativa(texto, correta, pergunta_id) {
+    let dbCx = await getDbConnection();
+    let query = 'INSERT INTO alternativas (texto, correta, pergunta_id) VALUES (?, ?, ?)';
+    const result = await dbCx.runAsync(query, [texto, correta ? 1 : 0, pergunta_id]);
     await dbCx.closeAsync();
     return result.changes == 1;
 }
 
-
-export async function excluiUsuario(codigo) {
-    let dbCx = await getDbConnection();
-    let query = 'delete from tbUsuarios where codigo=?';
-    const result = await dbCx.runAsync(query, codigo);
+export async function obtemAlternativasPorPergunta(pergunta_id) {
+    var dbCx = await getDbConnection();
+    const registros = await dbCx.getAllAsync('SELECT * FROM alternativas WHERE pergunta_id = ?', [pergunta_id]);
     await dbCx.closeAsync();
-    return result.changes == 1;
-}
-
-
-export async function excluiTodosUsuarios() {
-    let dbCx = await getDbConnection();
-    let query = 'delete from tbUsuarios';
-    await dbCx.execAsync(query);
-    await dbCx.closeAsync();
+    return registros;
 }
