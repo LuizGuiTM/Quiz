@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "Agenda Telefonica",
-    "slug": "AgendaTelefonica",
+    "name": "Quiz App",
+    "slug": "QuizApp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/contact.png",
+    "icon": "./assets/quiz-32.png",
     "splash": {
-      "image": "./assets/contact-128.png",
+      "image": "./assets/quiz-32.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -21,13 +21,13 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/contact.png",
+        "foregroundImage": "./assets/quiz-32.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "AgendaContatos.apk"
+      "package": "QuizApp.apk"
     },
     "web": {
-      "favicon": "./assets/contact.png"
+      "favicon": "./assets/quiz-32.png"
     }
   }
 }
