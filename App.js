@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -7,6 +6,7 @@ import CadastroTema from './componentes/CadastroTema';
 import CadastroPergunta from './componentes/CadastroPergunta';
 import InicioQuiz from './componentes/InicioQuiz';
 import Quiz from './componentes/Quiz';
+import ListarPerguntas from './componentes/ListarPerguntas';
 import { createTables } from './services/dbservice';
 import theme from './theme';
 
@@ -53,6 +53,11 @@ export default function App() {
           name="CadastroTema"
           component={CadastroTema}
           options={{ title: 'Cadastro de Temas' }}
+        />
+        <Stack.Screen
+          name="ListarPerguntas"
+          component={ListarPerguntas}
+          options={{ title: 'Gerenciar Perguntas' }}
         />
         <Stack.Screen
           name="CadastroPergunta"

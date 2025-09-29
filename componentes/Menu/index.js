@@ -23,8 +23,8 @@ export default function Menu({ navigation }) {
           onPress={() => navigation.navigate('CadastroTema')} 
         />
         <MenuButton 
-          title="Cadastro de Perguntas" 
-          onPress={() => navigation.navigate('CadastroPergunta')} 
+          title="Gerenciar Perguntas" 
+          onPress={() => navigation.navigate('ListarPerguntas')} 
         />
         <MenuButton 
           title="Iniciar Quiz" 
