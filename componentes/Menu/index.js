@@ -19,8 +19,8 @@ export default function Menu({ navigation }) {
       />
       <View style={styles.buttonContainer}>
         <MenuButton 
-          title="Cadastro de Temas" 
-          onPress={() => navigation.navigate('CadastroTema')} 
+          title="Gerenciar Temas" 
+          onPress={() => navigation.navigate('ListarTemas')} 
         />
         <MenuButton 
           title="Gerenciar Perguntas" 

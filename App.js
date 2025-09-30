@@ -7,6 +7,7 @@ import CadastroPergunta from './componentes/CadastroPergunta';
 import InicioQuiz from './componentes/InicioQuiz';
 import Quiz from './componentes/Quiz';
 import ListarPerguntas from './componentes/ListarPerguntas';
+import ListarTemas from './componentes/ListarTemas';
 import { createTables } from './services/dbservice';
 import theme from './theme';
 
@@ -50,9 +51,14 @@ export default function App() {
           }}
         />
         <Stack.Screen
+          name="ListarTemas"
+          component={ListarTemas}
+          options={{ title: 'Gerenciar Temas' }}
+        />
+        <Stack.Screen
           name="CadastroTema"
           component={CadastroTema}
-          options={{ title: 'Cadastro de Temas' }}
+          options={{ title: 'Cadastro de Tema' }}
         />
         <Stack.Screen
           name="ListarPerguntas"
